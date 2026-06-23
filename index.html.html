@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Niruthi IT Helpdesk — Raise a Ticket</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #eef2f7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 48px;
+}
+
+.header {
+  width: 100%;
+  background: linear-gradient(135deg, #1a4f7a 0%, #0d7a5f 100%);
+  padding: 22px 36px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo {
+  width: 52px; height: 52px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 22px; color: #1a4f7a;
+  flex-shrink: 0;
+}
+
+.header h1 { color: #fff; font-size: 21px; font-weight: 600; }
+.header p  { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 2px; }
+
+.card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.09);
+  width: 100%;
+  max-width: 640px;
+  margin-top: 36px;
+  overflow: hidden;
+}
+
+.card-top {
+  background: linear-gradient(90deg, #1a4f7a, #155e75);
+  padding: 22px 30px;
+  display: flex; align-items: center; gap: 14px;
+}
+
+.card-top-icon {
+  width: 42px; height: 42px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+
+.card-top h2 { color: #fff; font-size: 17px; font-weight: 600; }
+.card-top p  { color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 2px; }
+
+.card-body { padding: 30px; }
+
+.info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #1e40af;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 16px;
+}
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.field { margin-bottom: 18px; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.req { color: #ef4444; margin-left: 2px; }
+
+input[type=text], input[type=email], select, textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  font-size: 14px;
+  color: #1e293b;
+  background: #f8fafc;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #1a4f7a;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(26,79,122,0.1);
+}
+
+input.err, select.err, textarea.err { border-color: #ef4444; background: #fff5f5; }
+
+textarea { resize: vertical; min-height: 100px; }
+
+.err-msg { color: #ef4444; font-size: 12px; margin-top: 4px; display: none; }
+
+.priority-row { display: flex; gap: 12px; margin-top: 4px; }
+
+.pill {
+  flex: 1; padding: 10px 8px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 9px;
+  text-align: center;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  color: #64748b;
+  background: #f8fafc;
+  user-select: none;
+}
+
+.pill:hover { border-color: #94a3b8; }
+.pill.low.sel   { background: #f0fdf4; border-color: #22c55e; color: #166534; }
+.pill.med.sel   { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+.pill.high.sel  { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+
+hr.div { border: none; border-top: 1px solid #f1f5f9; margin: 22px 0; }
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #1a4f7a, #0d7a5f);
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: opacity .2s, transform .1s;
+}
+.btn:hover { opacity: .9; }
+.btn:active { transform: scale(.99); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.spin {
+  display: inline-block;
+  width: 17px; height: 17px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Success */
+.success {
+  display: none;
+  text-align: center;
+  padding: 52px 30px;
+}
+.success-icon {
+  width: 80px; height: 80px;
+  background: #f0fdf4;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 22px;
+  font-size: 36px;
+}
+.success h3 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+.success p  { color: #64748b; font-size: 14px; line-height: 1.7; max-width: 380px; margin: 0 auto 20px; }
+.ticket-badge {
+  display: inline-block;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 28px;
+}
+.btn-new {
+  padding: 12px 32px;
+  background: #1a4f7a;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Error banner */
+.err-banner {
+  display: none;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #991b1b;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">N</div>
+  <div>
+    <h1>Niruthi Climate Eco Systems</h1>
+    <p>IT Helpdesk Portal</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-top">
+    <div class="card-top-icon">🎫</div>
+    <div>
+      <h2>Raise an IT Support Ticket</h2>
+      <p>Your request will be sent to your manager for approval</p>
+    </div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Success -->
+    <div class="success" id="success">
+      <div class="success-icon">✅</div>
+      <h3>Ticket Submitted!</h3>
+      <p>Your IT support request has been raised successfully. Your manager will receive an approval request shortly.</p>
+      <div class="ticket-badge" id="ticketBadge">Ticket ID: —</div><br>
+      <button class="btn-new" onclick="reset()">Raise Another Ticket</button>
+    </div>
+
+    <!-- Form -->
+    <div id="formWrap">
+      <div class="info-box">
+        📋 Fill in all required fields. Once submitted, your manager will receive an email to approve or reject your request.
+      </div>
+
+      <div class="err-banner" id="errBanner"></div>
+
+      <div class="section-title">Your Details</div>
+
+      <div class="row">
+        <div class="field">
+          <label>Your Full Name <span class="req">*</span></label>
+          <input type="text" id="f_name" placeholder="e.g. Ravi Kumar">
+          <div class="err-msg" id="e_name">Please enter your name</div>
+        </div>
+        <div class="field">
+          <label>Your Email <span class="req">*</span></label>
+          <input type="email" id="f_email" placeholder="you@niruthi.com">
+          <div class="err-msg" id="e_email">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Department <span class="req">*</span></label>
+          <select id="f_dept">
+            <option value="">— Select —</option>
+            <option>IT</option>
+            <option>HR</option>
+            <option>Finance</option>
+            <option>Operations</option>
+            <option>Sales</option>
+            <option>Admin</option>
+          </select>
+          <div class="err-msg" id="e_dept">Please select your department</div>
+        </div>
+        <div class="field">
+          <label>Manager Email <span class="req">*</span></label>
+          <input type="email" id="f_mgr" placeholder="manager@niruthi.com">
+          <div class="err-msg" id="e_mgr">Please enter manager email</div>
+        </div>
+      </div>
+
+      <hr class="div">
+      <div class="section-title">Ticket Details</div>
+
+      <div class="row">
+        <div class="field">
+          <label>Category <span class="req">*</span></label>
+          <select id="f_cat">
+            <option value="">— Select —</option>
+            <option>Hardware</option>
+            <option>Software</option>
+            <option>Network</option>
+            <option>Email Issues</option>
+            <option>Access / Permissions</option>
+            <option>Other</option>
+          </select>
+          <div class="err-msg" id="e_cat">Please select a category</div>
+        </div>
+        <div class="field">
+          <label>Priority <span class="req">*</span></label>
+          <div class="priority-row">
+            <div class="pill low"  onclick="setPri('Low',this)">🟢 Low</div>
+            <div class="pill med"  onclick="setPri('Medium',this)">🟡 Medium</div>
+            <div class="pill high" onclick="setPri('High',this)">🔴 High</div>
+          </div>
+          <input type="hidden" id="f_pri">
+          <div class="err-msg" id="e_pri">Please select a priority</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Description <span class="req">*</span></label>
+        <textarea id="f_desc" placeholder="Describe your issue in detail..."></textarea>
+        <div class="err-msg" id="e_desc">Please describe your issue</div>
+      </div>
+
+      <button class="btn" id="submitBtn" onclick="submit()">Submit Ticket</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SITE = 'https://niruthi-my.sharepoint.com/personal/sriram_durga_niruthi_com';
+const LIST = 'Niruthi Help Desk';
+let pri = '';
+
+function setPri(v, el) {
+  pri = v;
+  document.getElementById('f_pri').value = v;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('e_pri').style.display = 'none';
+}
+
+function validate() {
+  let ok = true;
+  const checks = [
+    ['f_name','e_name', v => v.trim().length > 1],
+    ['f_email','e_email', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)],
+    ['f_dept','e_dept', v => v !== ''],
+    ['f_mgr','e_mgr', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)],
+    ['f_cat','e_cat', v => v !== ''],
+    ['f_desc','e_desc', v => v.trim().length > 4],
+  ];
+  checks.forEach(([fid, eid, fn]) => {
+    const el = document.getElementById(fid);
+    const err = document.getElementById(eid);
+    if (!fn(el.value)) { el.classList.add('err'); err.style.display='block'; ok=false; }
+    else { el.classList.remove('err'); err.style.display='none'; }
+  });
+  if (!pri) { document.getElementById('e_pri').style.display='block'; ok=false; }
+  return ok;
+}
+
+async function submit() {
+  if (!validate()) return;
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Submitting...';
+  document.getElementById('errBanner').style.display = 'none';
+
+  try {
+    // Step 1: Get form digest
+    const ctxRes = await fetch(`${SITE}/_api/contextinfo`, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json;odata=verbose', 'Content-Type': 'application/json;odata=verbose' },
+      credentials: 'include'
+    });
+
+    if (!ctxRes.ok) throw new Error(`Auth error ${ctxRes.status} — Please make sure you are signed into your Niruthi Microsoft account in this browser.`);
+
+    const ctxData = await ctxRes.json();
+    const digest = ctxData.d.GetContextWebInformation.FormDigestValue;
+
+    // Step 2: Create item
+    const body = {
+      '__metadata': { 'type': `SP.Data.Niruthi_x0020_Help_x0020_DeskListItem` },
+      'Title': document.getElementById('f_name').value.trim(),
+      'Category': document.getElementById('f_cat').value,
+      'Priority': pri,
+      'Status': 'New',
+      'Department': document.getElementById('f_dept').value,
+      'RequestedByEmail': document.getElementById('f_email').value.trim(),
+      'ManagerEmail': document.getElementById('f_mgr').value.trim(),
+      'Description': document.getElementById('f_desc').value.trim(),
+    };
+
+    const postRes = await fetch(`${SITE}/_api/web/lists/getbytitle('${encodeURIComponent(LIST)}')/items`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json;odata=verbose',
+        'Content-Type': 'application/json;odata=verbose',
+        'X-RequestDigest': digest
+      },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+
+    if (!postRes.ok) {
+      const errText = await postRes.text();
+      throw new Error(`Could not create ticket (${postRes.status}). ${errText.substring(0,200)}`);
+    }
+
+    const postData = await postRes.json();
+    const id = postData.d.ID;
+
+    // Show success
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('ticketBadge').textContent = `Ticket ID: NIT-${String(id).padStart(4,'0')}`;
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Ticket';
+    const banner = document.getElementById('errBanner');
+    banner.style.display = 'block';
+    banner.innerHTML = `❌ <strong>Submission failed.</strong><br>${e.message}`;
+  }
+}
+
+function reset() {
+  document.getElementById('formWrap').style.display = 'block';
+  document.getElementById('success').style.display = 'none';
+  document.getElementById('formWrap').querySelectorAll('input,select,textarea').forEach(el => { el.value=''; el.classList.remove('err'); });
+  document.querySelectorAll('.err-msg').forEach(e => e.style.display='none');
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('sel'));
+  document.getElementById('errBanner').style.display='none';
+  pri='';
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=false; btn.innerHTML='Submit Ticket';
+}
+</script>
+</body>
+</html>
