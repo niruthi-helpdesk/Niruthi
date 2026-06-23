@@ -9,743 +9,882 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --forest: #0a4f35;
-  --ocean: #0b3260;
-  --mint: #00c77a;
-  --sky: #0ea5e9;
-  --gold: #f59e0b;
-  --bg: #080f1a;
-  --surface: #0f1929;
-  --card: #131f30;
-  --border: rgba(255,255,255,0.07);
-  --text: #f1f5f9;
-  --muted: #94a3b8;
+  --teal:    #00c9a7;
+  --purple:  #7c3aed;
+  --rose:    #f43f5e;
+  --amber:   #f59e0b;
+  --sky:     #0ea5e9;
+  --bg:      #0f0c29;
+  --card:    rgba(255,255,255,0.05);
+  --border:  rgba(255,255,255,0.1);
+  --text:    #f1f5f9;
+  --muted:   #94a3b8;
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
+  font-family: 'Inter', sans-serif;
   min-height: 100vh;
   color: var(--text);
   overflow-x: hidden;
+  position: relative;
 }
 
-/* ── ANIMATED BG ── */
-.bg-orbs {
+/* ══════════════════════════════
+   RICH GRADIENT BACKGROUND
+══════════════════════════════ */
+.bg-wrap {
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
-  overflow: hidden;
+  background: linear-gradient(135deg,
+    #0f0c29 0%,
+    #1a0533 20%,
+    #0d1b4b 40%,
+    #0a2e2a 60%,
+    #1a0533 80%,
+    #0f0c29 100%
+  );
 }
 
-.orb {
+/* Animated gradient blobs */
+.blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.15;
-  animation: drift 20s ease-in-out infinite;
+  animation: blobMove 18s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+.blob-1 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%);
+  top: -200px; left: -100px;
+  animation-delay: 0s;
+}
+.blob-2 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,201,167,0.35) 0%, transparent 70%);
+  top: 30%; right: -100px;
+  animation-delay: -6s;
+}
+.blob-3 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(14,165,233,0.3) 0%, transparent 70%);
+  bottom: -100px; left: 30%;
+  animation-delay: -12s;
+}
+.blob-4 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(244,63,94,0.2) 0%, transparent 70%);
+  top: 50%; left: 10%;
+  animation-delay: -4s;
 }
 
-.orb-1 { width: 600px; height: 600px; background: #0a4f35; top: -200px; left: -200px; animation-delay: 0s; }
-.orb-2 { width: 500px; height: 500px; background: #0b3260; top: 30%; right: -150px; animation-delay: -7s; }
-.orb-3 { width: 400px; height: 400px; background: #00c77a; bottom: -100px; left: 30%; animation-delay: -14s; opacity: 0.08; }
-
-@keyframes drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -30px) scale(1.05); }
-  66% { transform: translate(-20px, 20px) scale(0.95); }
+@keyframes blobMove {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(40px,-40px) scale(1.08); }
+  66%  { transform: translate(-30px,30px) scale(0.93); }
+  100% { transform: translate(20px,-20px) scale(1.03); }
 }
 
-/* ── TOP NAV ── */
+/* Subtle grid overlay */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Clouds */
+.cloud-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  animation: cloudFloat linear infinite;
+}
+
+.cloud svg ellipse {
+  fill: rgba(255,255,255,0.06);
+}
+
+.cl-1 { top: 6%;  animation-duration: 70s;  animation-delay: 0s;    left: -350px; }
+.cl-2 { top: 18%; animation-duration: 90s;  animation-delay: -25s;  left: -250px; transform: scale(0.65); }
+.cl-3 { top: 3%;  animation-duration: 110s; animation-delay: -50s;  left: -420px; transform: scale(1.2); }
+.cl-4 { top: 28%; animation-duration: 80s;  animation-delay: -15s;  left: -300px; transform: scale(0.8); }
+
+@keyframes cloudFloat {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(100vw + 500px)); }
+}
+
+/* ══════════════════════════════
+   TOP NAV
+══════════════════════════════ */
 .topnav {
   position: relative;
-  z-index: 10;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 48px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,15,26,0.8);
-  backdrop-filter: blur(20px);
+  padding: 16px 52px;
+  background: rgba(15,12,41,0.6);
+  backdrop-filter: blur(28px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.nav-logo {
+.brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.nav-logo-icon {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--mint), var(--sky));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
+.brand-logo {
+  width: 48px; height: 48px;
+  flex-shrink: 0;
+}
+
+.brand-text-main {
   font-family: 'Sora', sans-serif;
-  font-weight: 800; font-size: 18px;
-  color: #fff;
-  box-shadow: 0 0 20px rgba(0,199,122,0.3);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #00c9a7, #7c3aed, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
 }
 
-.nav-logo-text {
-  font-family: 'Sora', sans-serif;
-  font-size: 15px; font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.2px;
-}
-
-.nav-logo-sub {
-  font-size: 11px;
+.brand-text-sub {
+  font-size: 10px;
   color: var(--muted);
-  font-weight: 400;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-top: 3px;
 }
 
-.nav-right {
+.nav-status {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.status-pill {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(0,199,122,0.1);
-  border: 1px solid rgba(0,199,122,0.25);
+  gap: 8px;
+  background: rgba(0,201,167,0.08);
+  border: 1px solid rgba(0,201,167,0.2);
   border-radius: 100px;
-  padding: 6px 14px;
+  padding: 8px 18px;
   font-size: 12px;
-  color: #4ade80;
+  color: #5eead4;
   font-weight: 500;
 }
 
 .status-dot {
   width: 7px; height: 7px;
-  background: #22c55e;
+  background: #00c9a7;
   border-radius: 50%;
+  box-shadow: 0 0 8px #00c9a7;
   animation: blink 2s ease-in-out infinite;
 }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px #22c55e; }
-  50% { opacity: 0.5; box-shadow: none; }
+/* DateTime block */
+.nav-datetime {
+  text-align: right;
 }
 
 .nav-time {
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Sora', sans-serif;
+  color: #ffffff;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 20px rgba(0,201,167,0.5);
+  letter-spacing: 1px;
 }
 
-/* ── HERO SECTION ── */
+.nav-date-line {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-top: 3px;
+  letter-spacing: 0.3px;
+}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
 .hero {
   position: relative;
   z-index: 1;
-  padding: 70px 48px 60px;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 72px 52px 56px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  grid-template-columns: 1fr 400px;
+  gap: 72px;
   align-items: center;
 }
 
-.hero-left h1 {
-  font-family: 'Sora', sans-serif;
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 6px;
-}
-
-.hero-left h1 span {
-  background: linear-gradient(135deg, var(--mint), var(--sky));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-eyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--mint);
-  margin-bottom: 16px;
-  display: flex;
+.hero-tag {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,201,167,0.15));
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 100px;
+  padding: 7px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c4b5fd;
+  margin-bottom: 24px;
 }
 
-.hero-eyebrow::before {
-  content: '';
-  width: 24px; height: 2px;
-  background: var(--mint);
-  border-radius: 2px;
+.hero-h1 {
+  font-family: 'Sora', sans-serif;
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 22px;
 }
 
-.hero-desc {
+.h1-line1 { display: block; color: rgba(241,245,249,0.95); }
+
+.h1-line2 {
+  display: block;
+  background: linear-gradient(135deg, #00c9a7 0%, #7c3aed 50%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-p {
+  font-size: 16px;
+  line-height: 1.8;
   color: var(--muted);
-  font-size: 15px;
-  line-height: 1.7;
-  margin-top: 16px;
-  max-width: 400px;
+  max-width: 440px;
+  margin-bottom: 44px;
 }
 
 .hero-stats {
   display: flex;
-  gap: 32px;
-  margin-top: 36px;
+  gap: 44px;
 }
 
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.hs {
+  position: relative;
+  padding-left: 18px;
 }
 
-.stat-val {
+.hs::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px;
+  width: 3px; height: 26px;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+}
+
+.hs-val {
   font-family: 'Sora', sans-serif;
   font-size: 26px;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 800;
+  color: #fff;
 }
 
-.stat-label {
+.hs-lbl {
   font-size: 11px;
   color: var(--muted);
-  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
-/* ── WORKFLOW STEPS ── */
-.hero-right {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+/* ══════════════════════════════
+   WORKFLOW CARD
+══════════════════════════════ */
+.wf-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 28px 24px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 80px rgba(124,58,237,0.1), 0 40px 80px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
 }
 
-.hero-right-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+.wf-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00c9a7, #7c3aed, #f43f5e, #0ea5e9);
+}
+
+.wf-head {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.wf-head::after { content: ''; flex:1; height:1px; background: rgba(255,255,255,0.07); }
 
-.wf-step {
+.wf-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 18px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: all 0.2s;
+  padding: 13px 12px;
+  border-radius: 14px;
+  margin-bottom: 3px;
+  transition: background 0.2s;
   position: relative;
+  cursor: default;
 }
+.wf-row:hover { background: rgba(255,255,255,0.05); }
 
-.wf-step:not(:last-child)::after {
+.wf-row:not(:last-child)::after {
   content: '';
   position: absolute;
-  left: 27px;
-  bottom: -14px;
-  width: 2px;
-  height: 14px;
-  background: linear-gradient(to bottom, var(--border), transparent);
+  left: 23px; bottom: -8px;
+  width: 2px; height: 8px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
 }
 
-.wf-icon {
-  width: 36px; height: 36px;
-  border-radius: 10px;
+.wf-ic {
+  width: 40px; height: 40px;
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   flex-shrink: 0;
 }
+.ic-teal   { background: rgba(0,201,167,0.15); border: 1px solid rgba(0,201,167,0.25); }
+.ic-purple { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.25); }
+.ic-amber  { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25); }
+.ic-rose   { background: rgba(244,63,94,0.15); border: 1px solid rgba(244,63,94,0.25); }
 
-.wf-icon.green { background: rgba(0,199,122,0.15); }
-.wf-icon.blue  { background: rgba(14,165,233,0.15); }
-.wf-icon.gold  { background: rgba(245,158,11,0.15); }
-.wf-icon.purple{ background: rgba(139,92,246,0.15); }
+.wf-txt strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
+.wf-txt span   { font-size: 11px; color: var(--muted); }
+.wf-arr { margin-left: auto; color: rgba(255,255,255,0.25); font-size: 16px; }
 
-.wf-text strong {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.wf-text span {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.wf-arrow {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 16px;
-}
-
-/* ── DIVIDER ── */
-.section-divider {
+/* ══════════════════════════════
+   DIVIDER
+══════════════════════════════ */
+.divider {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 48px;
+  padding: 0 52px;
+  margin-bottom: 40px;
 }
-
 .divider-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), rgba(0,201,167,0.4), transparent);
+  position: relative;
+}
+.divider-line::before {
+  content: '✦';
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: var(--teal);
+  background: transparent;
+  padding: 0 16px;
+  background: #0d1533;
 }
 
-/* ── FORM SECTION ── */
-.form-section {
+/* ══════════════════════════════
+   MAIN LAYOUT
+══════════════════════════════ */
+.main-wrap {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 48px 80px;
+  padding: 0 52px 80px;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
+  grid-template-columns: 290px 1fr;
+  gap: 28px;
   align-items: start;
 }
 
-/* ── SIDEBAR ── */
+/* ══════════════════════════════
+   SIDEBAR
+══════════════════════════════ */
 .sidebar {
+  position: sticky;
+  top: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  position: sticky;
-  top: 24px;
 }
 
-.sidebar-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+.sc {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
   padding: 20px;
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar-card-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+.sc::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,201,167,0.4), transparent);
+}
+
+.sc-head {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #00c9a7;
   margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.info-item {
+.sc-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
+.sc-item:last-child { border-bottom: none; padding-bottom: 0; }
 
-.info-item:last-child { border-bottom: none; padding-bottom: 0; }
-
-.info-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.05);
+.sc-icon {
+  width: 34px; height: 34px;
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 15px;
   flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
-.info-text strong {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
+.sc-txt strong { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.sc-txt span   { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+.prio-list { display: flex; flex-direction: column; gap: 12px; }
+.prio-row  { display: flex; align-items: center; gap: 10px; }
+.prio-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pd-high   { background: #f43f5e; box-shadow: 0 0 10px rgba(244,63,94,0.6); }
+.pd-med    { background: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.6); }
+.pd-low    { background: #00c9a7; box-shadow: 0 0 10px rgba(0,201,167,0.6); }
+
+.prio-info { font-size: 12px; }
+.prio-info strong { color: var(--text); font-weight: 600; }
+.prio-info span   { color: var(--muted); }
+
+.hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hi {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
+.hi-day  { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+.hi-time { font-size: 13px; color: var(--text); font-weight: 600; margin-top: 4px; }
 
-.info-text span {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.priority-guide {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.priority-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.priority-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.p-high   { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
-.p-medium { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
-.p-low    { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
-
-/* ── FORM CARD ── */
+/* ══════════════════════════════
+   FORM CARD
+══════════════════════════════ */
 .form-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.4);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(124,58,237,0.1),
+    0 0 80px rgba(124,58,237,0.08),
+    0 0 80px rgba(0,201,167,0.05),
+    0 48px 96px rgba(0,0,0,0.5);
+  position: relative;
 }
 
-.form-card-header {
-  padding: 24px 28px 20px;
-  border-bottom: 1px solid var(--border);
+.form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00c9a7, #7c3aed, #f43f5e, #0ea5e9, #00c9a7);
+  background-size: 200%;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+
+.fc-top {
+  padding: 26px 32px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(0,201,167,0.06));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255,255,255,0.02);
 }
 
-.form-card-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.fct-left { display: flex; align-items: center; gap: 14px; }
 
-.form-card-icon {
-  width: 44px; height: 44px;
-  background: linear-gradient(135deg, rgba(0,199,122,0.2), rgba(14,165,233,0.2));
-  border: 1px solid rgba(0,199,122,0.2);
-  border-radius: 12px;
+.fct-icon {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0,201,167,0.2), rgba(124,58,237,0.2));
+  border: 1px solid rgba(0,201,167,0.2);
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
+  font-size: 24px;
+  box-shadow: 0 0 24px rgba(0,201,167,0.15);
 }
 
-.form-card-title h2 {
+.fct-title h2 {
   font-family: 'Sora', sans-serif;
-  font-size: 16px; font-weight: 700;
+  font-size: 17px;
+  font-weight: 700;
   color: var(--text);
+  letter-spacing: -0.3px;
 }
 
-.form-card-title p {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
-}
+.fct-title p { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-.form-tag {
-  background: rgba(14,165,233,0.1);
-  border: 1px solid rgba(14,165,233,0.2);
+.fct-badge {
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(14,165,233,0.15));
+  border: 1px solid rgba(124,58,237,0.25);
   border-radius: 100px;
-  padding: 4px 12px;
+  padding: 7px 16px;
   font-size: 11px;
-  color: #38bdf8;
-  font-weight: 500;
+  color: #c4b5fd;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.form-embed {
-  min-height: 860px;
-}
+.fc-body { min-height: 860px; }
+.fc-body iframe { width: 100%; min-height: 860px; border: none; display: block; }
 
-.form-embed iframe {
-  width: 100%;
-  min-height: 860px;
-  border: none;
-  display: block;
-  background: transparent;
-}
-
-.form-card-footer {
-  padding: 16px 28px;
-  border-top: 1px solid var(--border);
+.fc-bottom {
+  padding: 16px 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255,255,255,0.01);
 }
 
-.footer-secure {
+.fcb-left {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 12px;
   color: var(--muted);
 }
-
-.footer-secure-icon {
-  width: 20px; height: 20px;
-  background: rgba(0,199,122,0.15);
-  border-radius: 5px;
+.fcb-secure {
+  width: 22px; height: 22px;
+  background: rgba(0,201,167,0.1);
+  border: 1px solid rgba(0,201,167,0.2);
+  border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   font-size: 11px;
 }
 
-.footer-brand {
-  font-size: 12px;
-  color: var(--muted);
-}
+.fcb-right { font-size: 11px; color: rgba(148,163,184,0.4); }
 
-/* ── PAGE FOOTER ── */
-.page-footer {
+/* ══════════════════════════════
+   PAGE FOOTER
+══════════════════════════════ */
+.pg-footer {
   position: relative;
   z-index: 1;
-  border-top: 1px solid var(--border);
-  padding: 24px 48px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 22px 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(8,15,26,0.5);
+  background: rgba(15,12,41,0.5);
+  backdrop-filter: blur(20px);
 }
+.pgf-l { font-size: 12px; color: rgba(148,163,184,0.5); }
+.pgf-r { display: flex; align-items: center; gap: 20px; }
+.pgf-badge { font-size: 11px; color: rgba(148,163,184,0.4); display: flex; align-items: center; gap: 6px; }
 
-.page-footer-left {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.page-footer-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.footer-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.footer-badge img {
-  height: 16px;
-  opacity: 0.5;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 40px; padding: 48px 24px 40px; }
-  .hero-left h1 { font-size: 32px; }
-  .form-section { grid-template-columns: 1fr; padding: 24px 24px 60px; }
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; padding: 56px 28px 40px; }
+  .hero-h1 { font-size: 38px; }
+  .main-wrap { grid-template-columns: 1fr; padding: 0 28px 60px; }
   .sidebar { position: static; }
-  .topnav { padding: 16px 24px; }
-  .nav-time { display: none; }
+  .topnav { padding: 14px 28px; }
+}
+@media (max-width: 600px) {
+  .hero-h1 { font-size: 30px; letter-spacing: -1px; }
+  .hero-stats { gap: 24px; }
+  .topnav { padding: 12px 16px; }
+  .nav-status { display: none; }
+  .pg-footer { flex-direction: column; gap: 10px; text-align: center; }
 }
 </style>
 </head>
 <body>
 
-<div class="bg-orbs">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
-
-<!-- TOP NAV -->
-<nav class="topnav">
-  <div class="nav-logo">
-    <div class="nav-logo-icon">N</div>
-    <div>
-      <div class="nav-logo-text">Niruthi Climate Eco Systems</div>
-      <div class="nav-logo-sub">IT Helpdesk Portal</div>
+<!-- ═══ BACKGROUND ═══ -->
+<div class="bg-wrap">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+  <div class="bg-grid"></div>
+  <div class="cloud-layer">
+    <div class="cloud cl-1">
+      <svg width="320" height="110" viewBox="0 0 320 110">
+        <ellipse cx="160" cy="78" rx="140" ry="32"/>
+        <ellipse cx="108" cy="60" rx="75" ry="38"/>
+        <ellipse cx="198" cy="55" rx="85" ry="40"/>
+        <ellipse cx="262" cy="70" rx="58" ry="30"/>
+        <ellipse cx="62" cy="70" rx="52" ry="27"/>
+        <ellipse cx="155" cy="38" rx="50" ry="26"/>
+      </svg>
+    </div>
+    <div class="cloud cl-2">
+      <svg width="240" height="85" viewBox="0 0 240 85">
+        <ellipse cx="120" cy="60" rx="105" ry="26"/>
+        <ellipse cx="80" cy="46" rx="60" ry="32"/>
+        <ellipse cx="155" cy="42" rx="72" ry="34"/>
+        <ellipse cx="205" cy="57" rx="44" ry="24"/>
+        <ellipse cx="42" cy="57" rx="40" ry="21"/>
+      </svg>
+    </div>
+    <div class="cloud cl-3">
+      <svg width="420" height="130" viewBox="0 0 420 130">
+        <ellipse cx="210" cy="92" rx="180" ry="38"/>
+        <ellipse cx="145" cy="70" rx="95" ry="48"/>
+        <ellipse cx="268" cy="64" rx="105" ry="52"/>
+        <ellipse cx="352" cy="85" rx="72" ry="36"/>
+        <ellipse cx="72" cy="85" rx="68" ry="34"/>
+        <ellipse cx="200" cy="44" rx="64" ry="32"/>
+      </svg>
+    </div>
+    <div class="cloud cl-4">
+      <svg width="210" height="75" viewBox="0 0 210 75">
+        <ellipse cx="105" cy="52" rx="92" ry="24"/>
+        <ellipse cx="70" cy="39" rx="50" ry="28"/>
+        <ellipse cx="142" cy="36" rx="58" ry="30"/>
+        <ellipse cx="175" cy="48" rx="40" ry="20"/>
+        <ellipse cx="36" cy="48" rx="36" ry="19"/>
+      </svg>
     </div>
   </div>
-  <div class="nav-right">
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      All Systems Operational
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav class="topnav">
+  <div class="brand">
+    <svg class="brand-logo" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#00c9a7"/>
+          <stop offset="50%" stop-color="#7c3aed"/>
+          <stop offset="100%" stop-color="#0ea5e9"/>
+        </linearGradient>
+      </defs>
+      <rect width="48" height="48" rx="13" fill="url(#g1)" opacity="0.15"/>
+      <rect width="48" height="48" rx="13" stroke="url(#g1)" stroke-width="1.2" fill="none" opacity="0.5"/>
+      <!-- N -->
+      <path d="M12 34V14L23 30V14" stroke="url(#g1)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M23 30V34M36 14V34" stroke="url(#g1)" stroke-width="2.8" stroke-linecap="round"/>
+      <!-- Clouds -->
+      <ellipse cx="36" cy="10" rx="5.5" ry="3.2" fill="#a0d8ef" opacity="0.75"/>
+      <ellipse cx="31.5" cy="10.5" rx="4.2" ry="2.8" fill="#a0d8ef" opacity="0.75"/>
+      <ellipse cx="39.5" cy="12.5" rx="3.5" ry="2.2" fill="#a0d8ef" opacity="0.55"/>
+      <ellipse cx="12" cy="9" rx="4.5" ry="2.8" fill="#a0d8ef" opacity="0.55"/>
+      <ellipse cx="8.5" cy="11" rx="3.2" ry="2.2" fill="#a0d8ef" opacity="0.45"/>
+      <ellipse cx="15.5" cy="9.5" rx="3" ry="2" fill="#a0d8ef" opacity="0.45"/>
+    </svg>
+    <div>
+      <div class="brand-text-main">Niruthi Climate Eco Systems</div>
+      <div class="brand-text-sub">IT Helpdesk Portal</div>
     </div>
-    <div class="nav-time" id="clock">--:-- --</div>
+  </div>
+
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    All Systems Operational
+  </div>
+
+  <div class="nav-datetime">
+    <div class="nav-time" id="clock">--:--:-- --</div>
+    <div class="nav-date-line" id="dateline">Loading...</div>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ═══ HERO ═══ -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">IT Support Portal</div>
-    <h1>Raise a<br><span>Support Ticket</span></h1>
-    <p class="hero-desc">Submit your IT request and your manager will receive an instant approval notification. Our team responds within 24 hours.</p>
+  <div>
+    <div class="hero-tag">🌿 IT Support Portal</div>
+    <h1 class="hero-h1">
+      <span class="h1-line1">Raise an IT</span>
+      <span class="h1-line2">Support Ticket</span>
+    </h1>
+    <p class="hero-p">Submit your IT request and your manager will receive an instant approval notification. Our team resolves every ticket efficiently.</p>
     <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-val">24h</div>
-        <div class="stat-label">Response Time</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val">100%</div>
-        <div class="stat-label">Tracked</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val">3-Step</div>
-        <div class="stat-label">Approval Flow</div>
-      </div>
+      <div class="hs"><div class="hs-val">24h</div><div class="hs-lbl">Response Time</div></div>
+      <div class="hs"><div class="hs-val">100%</div><div class="hs-lbl">Tracked</div></div>
+      <div class="hs"><div class="hs-val">3-Step</div><div class="hs-lbl">Approval Flow</div></div>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-right-title">How it works</div>
-    <div class="wf-step">
-      <div class="wf-icon green">📝</div>
-      <div class="wf-text">
-        <strong>Submit Request</strong>
-        <span>Fill the form with your issue details</span>
-      </div>
-      <div class="wf-arrow">›</div>
+
+  <div class="wf-card">
+    <div class="wf-head">How It Works</div>
+    <div class="wf-row">
+      <div class="wf-ic ic-teal">📝</div>
+      <div class="wf-txt"><strong>Submit Your Request</strong><span>Fill in your issue details</span></div>
+      <div class="wf-arr">›</div>
     </div>
-    <div class="wf-step">
-      <div class="wf-icon blue">✅</div>
-      <div class="wf-text">
-        <strong>Manager Approval</strong>
-        <span>Your manager approves or rejects</span>
-      </div>
-      <div class="wf-arrow">›</div>
+    <div class="wf-row">
+      <div class="wf-ic ic-purple">✅</div>
+      <div class="wf-txt"><strong>Manager Reviews</strong><span>Approve or reject via email</span></div>
+      <div class="wf-arr">›</div>
     </div>
-    <div class="wf-step">
-      <div class="wf-icon gold">⚡</div>
-      <div class="wf-text">
-        <strong>IT Team Action</strong>
-        <span>IT receives and resolves your ticket</span>
-      </div>
-      <div class="wf-arrow">›</div>
+    <div class="wf-row">
+      <div class="wf-ic ic-amber">⚡</div>
+      <div class="wf-txt"><strong>IT Team Acts</strong><span>Team receives & resolves ticket</span></div>
+      <div class="wf-arr">›</div>
     </div>
-    <div class="wf-step">
-      <div class="wf-icon purple">🎉</div>
-      <div class="wf-text">
-        <strong>You're Notified</strong>
-        <span>Email confirmation sent to you</span>
-      </div>
-      <div class="wf-arrow">›</div>
+    <div class="wf-row">
+      <div class="wf-ic ic-rose">🎉</div>
+      <div class="wf-txt"><strong>You're Notified</strong><span>Confirmation email sent to you</span></div>
+      <div class="wf-arr">›</div>
     </div>
   </div>
 </section>
 
-<div class="section-divider"><div class="divider-line"></div></div>
+<div class="divider"><div class="divider-line"></div></div>
 
-<!-- FORM SECTION -->
-<section class="form-section">
-
-  <!-- SIDEBAR -->
+<!-- ═══ MAIN ═══ -->
+<div class="main-wrap">
   <aside class="sidebar">
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Before You Submit</div>
-      <div class="info-item">
-        <div class="info-icon">📧</div>
-        <div class="info-text">
-          <strong>Use company email</strong>
-          <span>Enter your @niruthi.com email address</span>
-        </div>
+
+    <div class="sc">
+      <div class="sc-head">📋 Before You Submit</div>
+      <div class="sc-item">
+        <div class="sc-icon">📧</div>
+        <div class="sc-txt"><strong>Company email only</strong><span>Use your @niruthi.com address</span></div>
       </div>
-      <div class="info-item">
-        <div class="info-icon">👤</div>
-        <div class="info-text">
-          <strong>Manager email required</strong>
-          <span>Your direct manager's email for approval</span>
-        </div>
+      <div class="sc-item">
+        <div class="sc-icon">👤</div>
+        <div class="sc-txt"><strong>Manager email needed</strong><span>Direct manager for approval</span></div>
       </div>
-      <div class="info-item">
-        <div class="info-icon">📋</div>
-        <div class="info-text">
-          <strong>Be specific</strong>
-          <span>Describe the issue clearly for faster resolution</span>
+      <div class="sc-item">
+        <div class="sc-icon">📝</div>
+        <div class="sc-txt"><strong>Be descriptive</strong><span>Clear details = faster resolution</span></div>
+      </div>
+    </div>
+
+    <div class="sc">
+      <div class="sc-head">🚦 Priority Guide</div>
+      <div class="prio-list">
+        <div class="prio-row">
+          <div class="prio-dot pd-high"></div>
+          <div class="prio-info"><strong>High</strong> <span>— Can't work at all</span></div>
+        </div>
+        <div class="prio-row">
+          <div class="prio-dot pd-med"></div>
+          <div class="prio-info"><strong>Medium</strong> <span>— Slowing me down</span></div>
+        </div>
+        <div class="prio-row">
+          <div class="prio-dot pd-low"></div>
+          <div class="prio-info"><strong>Low</strong> <span>— Minor, can wait</span></div>
         </div>
       </div>
     </div>
 
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Priority Guide</div>
-      <div class="priority-guide">
-        <div class="priority-item">
-          <div class="priority-dot p-high"></div>
-          <div><strong style="color:var(--text);font-size:12px;">High</strong> — System down, can't work</div>
-        </div>
-        <div class="priority-item">
-          <div class="priority-dot p-medium"></div>
-          <div><strong style="color:var(--text);font-size:12px;">Medium</strong> — Slowing work down</div>
-        </div>
-        <div class="priority-item">
-          <div class="priority-dot p-low"></div>
-          <div><strong style="color:var(--text);font-size:12px;">Low</strong> — Minor issue, can wait</div>
-        </div>
+    <div class="sc">
+      <div class="sc-head">🕐 Support Hours</div>
+      <div class="hours-grid">
+        <div class="hi"><div class="hi-day">Mon – Fri</div><div class="hi-time">9AM – 6PM</div></div>
+        <div class="hi"><div class="hi-day">Saturday</div><div class="hi-time">10AM – 2PM</div></div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.7;">
+        🌿 IST · Niruthi Climate Eco Systems<br>Emergency: Contact IT directly
       </div>
     </div>
 
-    <div class="sidebar-card">
-      <div class="sidebar-card-title">Support Hours</div>
-      <div style="font-size:13px; color:var(--muted); line-height:1.8;">
-        <div style="color:var(--text); font-weight:500;">Mon – Fri</div>
-        9:00 AM – 6:00 PM IST<br>
-        <br>
-        <div style="color:var(--text); font-weight:500;">Emergency</div>
-        Contact IT directly
-      </div>
-    </div>
   </aside>
 
-  <!-- FORM CARD -->
   <div class="form-card">
-    <div class="form-card-header">
-      <div class="form-card-title">
-        <div class="form-card-icon">🎫</div>
-        <div>
-          <h2>IT Support Request</h2>
-          <p>All fields marked * are required</p>
+    <div class="fc-top">
+      <div class="fct-left">
+        <div class="fct-icon">🎫</div>
+        <div class="fct-title">
+          <h2>IT Support Request Form</h2>
+          <p>All starred (*) fields are required · Manager notified instantly</p>
         </div>
       </div>
-      <div class="form-tag">Powered by Microsoft Forms</div>
+      <div class="fct-badge">🔵 Microsoft Forms</div>
     </div>
 
-    <div class="form-embed">
+    <div class="fc-body">
       <iframe
         src="https://forms.microsoft.com/Pages/ResponsePage.aspx?id=GjWWoQ3RnE6r_AvLrN_h-UFoA71Z57hBo8SCh9mp2GNUQ09KNlFJTFhaMUJGV0wyVzFHOEFTU0VNQy4u&embed=true"
-        frameborder="0"
-        allowfullscreen>
+        frameborder="0" allowfullscreen>
       </iframe>
     </div>
 
-    <div class="form-card-footer">
-      <div class="footer-secure">
-        <div class="footer-secure-icon">🔒</div>
-        Secured by Microsoft 365 — data stored in SharePoint
+    <div class="fc-bottom">
+      <div class="fcb-left">
+        <div class="fcb-secure">🔒</div>
+        Secured by Microsoft 365 · Data stored in SharePoint
       </div>
-      <div class="footer-brand">© 2025 Niruthi Climate Eco Systems</div>
+      <div class="fcb-right">© 2025 Niruthi Climate Eco Systems</div>
     </div>
   </div>
+</div>
 
-</section>
-
-<!-- PAGE FOOTER -->
-<footer class="page-footer">
-  <div class="page-footer-left">Niruthi IT Helpdesk Portal · Built with Power Automate &amp; Microsoft 365</div>
-  <div class="page-footer-right">
-    <div class="footer-badge">🛡️ Enterprise Grade Security</div>
-    <div class="footer-badge">⚡ Automated Workflows</div>
+<!-- ═══ FOOTER ═══ -->
+<footer class="pg-footer">
+  <div class="pgf-l">Niruthi IT Helpdesk · Powered by Microsoft 365 & Power Automate</div>
+  <div class="pgf-r">
+    <div class="pgf-badge">🛡️ Enterprise Security</div>
+    <div class="pgf-badge">⚡ Automated Workflows</div>
+    <div class="pgf-badge">🌿 Eco Systems</div>
   </div>
 </footer>
 
 <script>
 function updateClock() {
   const now = new Date();
-  const h = now.getHours();
-  const m = String(now.getMinutes()).padStart(2, '0');
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
   const ampm = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 || 12;
-  document.getElementById('clock').textContent = `${h12}:${m} ${ampm} IST`;
+  document.getElementById('clock').textContent =
+    `${String(h12).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ampm}`;
+
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('dateline').textContent =
+    `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} · IST`;
 }
 updateClock();
 setInterval(updateClock, 1000);
 </script>
-
 </body>
 </html>
